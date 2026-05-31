@@ -105,6 +105,8 @@ Optional local-style vars (only if **not** using `DATABASE_URL` — not recommen
 
 Static files are served by **WhiteNoise** on Railway. Media (product images) are stored on **Cloudinary** — no separate media bucket needed.
 
+`collectstatic` runs at **build time** and again at **start** (with `--clear`) into `backend/staticfiles/`. It uses `vhbridge.settings` so it does not require `DATABASE_URL`. If deploy logs show `No directory at: .../staticfiles/`, push the latest `railway.json` and redeploy — you should see `173 static files copied` in the build or deploy logs.
+
 ---
 
 ## Post-deploy steps

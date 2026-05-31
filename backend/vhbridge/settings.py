@@ -94,7 +94,18 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "OPTIONS": {
+            "location": STATIC_ROOT,
+            "base_url": STATIC_URL,
+        },
+    },
+}
 
 # GBP → KES rate for product price calculator (all fee fields entered in GBP).
 GBP_TO_KES_RATE = config("GBP_TO_KES_RATE", default="165.00", cast=str)
