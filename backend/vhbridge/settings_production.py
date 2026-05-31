@@ -26,7 +26,8 @@ CSRF_TRUSTED_ORIGINS = config(  # noqa: F405
     cast=Csv(),
 )
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Plain storage — Manifest/compressed storage fails on Django admin assets during collectstatic.
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 STATIC_ROOT = BASE_DIR / "staticfiles"  # noqa: F405
 
 DATABASES["default"] = dj_database_url.config(  # noqa: F405
