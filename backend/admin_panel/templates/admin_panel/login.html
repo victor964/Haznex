@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haznex Admin | Sign in</title>
+  <link rel="stylesheet" href="{% static 'admin_panel/css/haznex.css' %}">
+</head>
+<body class="haznex-login-page">
+  <div class="haznex-login-card">
+    <h1 class="haznex-brand">Haznex</h1>
+    <p class="haznex-subtitle">VH Bridge Admin Panel</p>
+
+    {% if messages %}
+    <div class="haznex-messages">
+      {% for message in messages %}
+      <div class="haznex-alert haznex-alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div class="haznex-alert haznex-alert-error">
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="haznex-form">
+      {% csrf_token %}
+      <div class="haznex-field">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+      <div class="haznex-field">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+      </div>
+      <button type="submit" class="haznex-btn haznex-btn-primary haznex-btn-block">Sign in</button>
+    </form>
+  </div>
+</body>
+</html>

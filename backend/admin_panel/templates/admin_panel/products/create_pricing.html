@@ -1,0 +1,93 @@
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+{% block title %}New Product | Pricing | Haznex{% endblock %}
+{% block page_title %}New Product | Step 2 of 3{% endblock %}
+
+{% block nav_products %}{% include "admin_panel/products/_nav.html" %}{% endblock %}
+{% block nav_orders %}{% include "admin_panel/orders/_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="haznex-wizard-steps">
+  <span class="haznex-step">1. Details</span>
+  <span class="haznex-step active">2. Pricing</span>
+  <span class="haznex-step">3. Images</span>
+</div>
+
+<section class="haznex-section">
+  <h2>Price calculator</h2>
+  <p class="haznex-muted">Enter all amounts in <strong>GBP (£)</strong>. Final client price is the GBP total converted to <strong>KES</strong>.</p>
+  <p class="haznex-help" id="exchange-rate-hint">1 GBP = {{ gbp_to_kes_rate }} KES</p>
+
+  <form method="post" class="haznex-form" id="pricing-form" data-gbp-to-kes-rate="{{ gbp_to_kes_rate }}">
+    {% csrf_token %}
+
+    <div class="haznex-field">
+      {{ form.uk_original_price.label_tag }}
+      {{ form.uk_original_price }}
+      <p class="haznex-help">{{ form.uk_original_price.help_text }}</p>
+      {{ form.uk_original_price.errors }}
+    </div>
+
+    <div class="haznex-pricing-grid">
+      <div class="haznex-field">
+        {{ form.sourcing_fee.label_tag }}
+        {{ form.sourcing_fee }}
+        {{ form.sourcing_fee.errors }}
+      </div>
+      <div class="haznex-field">
+        {{ form.shipping_cost.label_tag }}
+        {{ form.shipping_cost }}
+        {{ form.shipping_cost.errors }}
+      </div>
+      <div class="haznex-field">
+        {{ form.transport_logistics_cost.label_tag }}
+        {{ form.transport_logistics_cost }}
+        {{ form.transport_logistics_cost.errors }}
+      </div>
+      <div class="haznex-field">
+        {{ form.profit_margin.label_tag }}
+        {{ form.profit_margin }}
+        {{ form.profit_margin.errors }}
+      </div>
+    </div>
+
+    <div class="haznex-final-price-box">
+      <span class="haznex-card-label">Subtotal (GBP)</span>
+      <span class="haznex-gbp-subtotal" id="gbp-subtotal-display">0.00 GBP</span>
+      <span class="haznex-card-label" style="margin-top:0.75rem;display:block;">Final client price</span>
+      <span class="haznex-final-price-display" id="final-price-display">0.00 KES</span>
+    </div>
+
+    <div class="haznex-field">
+      {{ form.final_client_price.label_tag }}
+      {{ form.final_client_price }}
+      {{ form.final_client_price.errors }}
+    </div>
+
+    <div class="haznex-field">
+      {{ form.default_shipping_option.label_tag }}
+      {{ form.default_shipping_option }}
+      {{ form.default_shipping_option.errors }}
+    </div>
+
+    <div class="haznex-field haznex-checkbox-field">
+      {{ form.confirm_final_price }}
+      {{ form.confirm_final_price.label_tag }}
+      {{ form.confirm_final_price.errors }}
+    </div>
+
+    <div class="haznex-form-actions">
+      <a href="{% url 'admin_panel:product_fetch' %}" class="haznex-btn haznex-btn-secondary">Back</a>
+      <button type="submit" class="haznex-btn haznex-btn-primary">Continue to images</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.HAZNEX_GBP_TO_KES = {{ gbp_to_kes_rate }};
+</script>
+<script src="{% static 'admin_panel/js/price_calculator.js' %}?v=4"></script>
+{% endblock %}

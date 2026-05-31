@@ -1,0 +1,49 @@
+{% extends "store/base.html" %}
+{% load store_tags order_tags %}
+
+{% block title %}My Orders | Haznex{% endblock %}
+
+{% block content %}
+<section class="py-12">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-haznex-text">My Orders</h1>
+    <p class="mt-2 text-haznex-muted">Track all your Haznex orders in one place</p>
+
+    {% if orders %}
+    <div class="mt-8 space-y-4">
+      {% for order in orders %}
+      <a href="{% url 'orders:order_detail' order_number=order.order_number %}" class="card-product block p-4 hover:no-underline">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          {% with img=order.product.primary_image %}
+          {% if img %}
+          <img src="{{ img.image.url }}" alt="{{ order.product.name }}" class="h-20 w-20 rounded-lg object-cover">
+          {% endif %}
+          {% endwith %}
+          <div class="flex-1">
+            <p class="font-semibold text-haznex-text">{{ order.order_number }}</p>
+            <p class="text-sm text-haznex-muted">{{ order.product.name }}</p>
+            <p class="mt-1 text-xs text-haznex-muted">{{ order.shipping_method.name }} · {{ order.created_at|date:"M j, Y" }}</p>
+            {% if order.last_status_update_at %}
+            <p class="mt-1 text-xs text-haznex-muted">Last updated: {{ order.last_status_update_at|date:"M j, Y g:i A" }}</p>
+            {% endif %}
+            {% if order.status == 'payment_pending' %}
+            <span class="needs-attention mt-2">Needs your attention</span>
+            {% endif %}
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-gold-dark">{{ order.total_price|kes }}</p>
+            <span class="status-badge mt-2 {{ order.status|order_status_badge_class }}">{{ order.get_status_display }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="mt-12 text-center py-16">
+      <p class="text-lg text-haznex-muted">You haven't placed any orders yet.</p>
+      <a href="{% url 'store:product_list' %}" class="btn-gold mt-6">Browse Products</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "orders/emails/base_email.html" %}
+{% block email_title %}Payment confirmed | {{ order_number }}{% endblock %}
+{% block email_body %}
+<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1a1a1a;">Your payment has been confirmed. Thank you for choosing Haznex.</p>
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#4b4b4b;">We are now sourcing your item from the UK. Our team will keep you updated at each step of the journey.</p>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#4b4b4b;">Expect your next update soon.</p>
+{% endblock %}

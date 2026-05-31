@@ -1,0 +1,97 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Products | Haznex{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block header_extra %}
+<a href="{% url 'admin_panel:product_fetch' %}" class="haznex-btn haznex-btn-primary">+ New product</a>
+{% endblock %}
+
+{% block content %}
+<form method="get" class="haznex-filters">
+  <input type="search" name="q" value="{{ search_q }}" placeholder="Search by name" class="haznex-input">
+  <select name="is_active" class="haznex-input">
+    <option value="">All statuses</option>
+    <option value="true" {% if filter_is_active == "true" %}selected{% endif %}>Active</option>
+    <option value="false" {% if filter_is_active == "false" %}selected{% endif %}>Inactive</option>
+  </select>
+  <select name="source_type" class="haznex-input">
+    <option value="">All sources</option>
+    <option value="facebook_marketplace" {% if filter_source_type == "facebook_marketplace" %}selected{% endif %}>Facebook Marketplace</option>
+    <option value="local" {% if filter_source_type == "local" %}selected{% endif %}>Local</option>
+  </select>
+  <button type="submit" class="haznex-btn haznex-btn-secondary">Filter</button>
+</form>
+
+<section class="haznex-section">
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Source</th>
+        <th>Condition</th>
+        <th>Price (KES)</th>
+        <th>Active</th>
+        <th>Created by</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.get_source_type_display }}</td>
+        <td>{{ product.get_condition_display }}</td>
+        <td>
+          {% if product.price_breakdown %}
+          {{ product.price_breakdown.final_client_price }}
+          {% else %}N/A{% endif %}
+        </td>
+        <td>
+          {% if product.is_active %}
+          <span class="haznex-tag haznex-tag-active">Active</span>
+          {% else %}
+          <span class="haznex-tag">Inactive</span>
+          {% endif %}
+        </td>
+        <td>{{ product.created_by.get_username }}</td>
+        <td>{{ product.created_at|date:"M j, Y" }}</td>
+        <td class="haznex-actions">
+          <a href="{% url 'admin_panel:product_edit' product.pk %}">Edit</a>
+          <form method="post" action="{% url 'admin_panel:product_toggle_active' product.pk %}" class="haznex-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="haznex-link-btn">
+              {% if product.is_active %}Deactivate{% else %}Activate{% endif %}
+            </button>
+          </form>
+          <a href="{% url 'admin_panel:product_delete' product.pk %}" class="haznex-danger-link">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" class="haznex-muted">No products yet. <a href="{% url 'admin_panel:product_fetch' %}">Create one</a>.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="haznex-pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}&q={{ search_q }}&is_active={{ filter_is_active }}&source_type={{ filter_source_type }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&q={{ search_q }}&is_active={{ filter_is_active }}&source_type={{ filter_source_type }}">Next</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

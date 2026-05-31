@@ -1,0 +1,6 @@
+{% extends "orders/emails/base_email.html" %}
+{% block email_title %}Arrived in Kenya | {{ order_number }}{% endblock %}
+{% block email_body %}
+<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1a1a1a;">Your item has arrived in Kenya.</p>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#4b4b4b;">We are arranging local delivery to your address. You will receive another update when your order is out for delivery.</p>
+{% endblock %}

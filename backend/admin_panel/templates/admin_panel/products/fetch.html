@@ -1,0 +1,59 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}New Product | Fetch | Haznex{% endblock %}
+{% block page_title %}New Product | Step 1 of 3{% endblock %}
+
+{% block nav_products %}{% include "admin_panel/products/_nav.html" %}{% endblock %}
+{% block nav_orders %}{% include "admin_panel/orders/_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="haznex-wizard-steps">
+  <span class="haznex-step active">1. Details</span>
+  <span class="haznex-step">2. Pricing</span>
+  <span class="haznex-step">3. Images</span>
+</div>
+
+<section class="haznex-section">
+  <h2>Facebook Marketplace fetcher</h2>
+  <p class="haznex-muted">Paste a listing URL to pre-fill the form. If scraping fails, use the manual form below.</p>
+  <form method="post" class="haznex-form haznex-form-inline">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="scrape">
+    <div class="haznex-field haznex-field-grow">
+      {{ url_form.facebook_url.label_tag }}
+      {{ url_form.facebook_url }}
+      {{ url_form.facebook_url.errors }}
+    </div>
+    <button type="submit" class="haznex-btn haznex-btn-primary">Fetch listing</button>
+  </form>
+</section>
+
+<section class="haznex-section">
+  <div class="haznex-section-header">
+    <h2>Product details</h2>
+    <form method="post" style="display:inline;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="skip">
+      <button type="submit" class="haznex-btn haznex-btn-secondary haznex-btn-sm">Skip fetch, enter manually</button>
+    </form>
+  </div>
+
+  <form method="post" class="haznex-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="continue">
+
+    {% for field in product_form %}
+    <div class="haznex-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<p class="haznex-help">{{ field.help_text }}</p>{% endif %}
+      {{ field.errors }}
+    </div>
+    {% endfor %}
+
+    <div class="haznex-form-actions">
+      <button type="submit" class="haznex-btn haznex-btn-primary">Continue to pricing</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

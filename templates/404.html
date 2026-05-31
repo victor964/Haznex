@@ -1,0 +1,16 @@
+{% extends "store/base.html" %}
+
+{% block title %}Page Not Found | Haznex{% endblock %}
+
+{% block content %}
+<section class="py-24">
+  <div class="mx-auto max-w-lg px-4 text-center sm:px-6">
+    <p class="text-6xl font-bold text-gold-dark">404</p>
+    <h1 class="mt-4 text-2xl font-bold text-haznex-text">We could not find what you were looking for</h1>
+    <p class="mt-4 text-haznex-muted">
+      The page may have moved or no longer exists. Try browsing our products instead.
+    </p>
+    <a href="{% url 'store:home' %}" class="btn-gold mt-8 inline-block px-8 py-4">Back to Homepage</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "store/base.html" %}
+{% load static store_tags %}
+
+{% block title %}Pay | {{ order.order_number }} | Haznex{% endblock %}
+
+{% block content %}
+<section class="py-12">
+  <div class="mx-auto w-full max-w-lg px-4 sm:px-6 lg:px-8">
+    <div class="rounded-xl border border-haznex-border bg-white p-6 shadow-sm">
+      <p class="text-sm text-haznex-muted">Order {{ order.order_number }}</p>
+      <h1 class="mt-1 text-xl font-bold text-haznex-text">{{ product_name }}</h1>
+      <p class="mt-4 text-sm text-haznex-muted">Total amount</p>
+      <p class="text-3xl font-bold text-gold-dark">{{ order.total_price|kes }}</p>
+
+      {% if payment %}
+      <p class="mt-4 text-sm">
+        Payment status:
+        <span class="font-semibold text-haznex-text">{{ payment.get_status_display }}</span>
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="mt-8 rounded-xl border border-haznex-border p-6">
+      <label for="phone_number" class="block text-sm font-medium text-haznex-text">
+        Enter your M-Pesa number to pay
+      </label>
+      <input
+        type="tel"
+        id="phone_number"
+        placeholder="0712345678 or 254712345678"
+        class="mt-2 w-full rounded-lg border border-haznex-border px-4 py-3 text-haznex-text focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+        required
+        autocomplete="tel"
+      />
+
+      <form id="pay-form" class="mt-6">
+        {% csrf_token %}
+        <button type="submit" id="pay-now-btn" class="btn-gold w-full py-4 text-base">
+          Pay Now
+        </button>
+      </form>
+
+      {% if stk_enabled %}
+      <p id="stk-hint" class="mt-4 text-sm text-haznex-muted">
+        You will receive an M-Pesa prompt on your phone. Enter your PIN to complete payment.
+      </p>
+      {% endif %}
+
+      <div id="pay-message" class="mt-4 hidden text-sm" role="status"></div>
+
+      <div class="mt-8 border-t border-haznex-border pt-6 {% if not stk_enabled %}rounded-lg border-2 border-gold bg-gold/10 p-4 -mx-0{% endif %}">
+        <p class="text-sm text-haznex-text {% if not stk_enabled %}font-medium{% endif %}">
+          After paying, click the button below to confirm your payment manually.
+        </p>
+        <form
+          id="manual-form"
+          method="post"
+          action="{% url 'payments:manual_confirm' order_number=order.order_number %}"
+          class="mt-4"
+        >
+          {% csrf_token %}
+          <input type="hidden" name="phone_number" id="manual_phone_number" value="">
+          <button
+            type="submit"
+            class="{% if stk_enabled %}w-full rounded-lg border-2 border-gold px-4 py-3 text-sm font-semibold text-gold-dark hover:bg-gold/10{% else %}btn-gold w-full py-4 text-base{% endif %}"
+          >
+            I Have Paid
+          </button>
+        </form>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-haznex-muted">
+        Your order number is <strong class="text-haznex-text">{{ order.order_number }}</strong>.
+        Keep this safe.
+      </p>
+
+      <p class="mt-4 text-center">
+        <a href="{% url 'payments:status' order_number=order.order_number %}" class="text-sm font-medium text-gold-dark hover:underline">
+          View payment status
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.HAZNEX_PAY = {
+    initiateUrl: "{% url 'payments:initiate' order_number=order.order_number %}",
+    stkEnabled: {{ stk_enabled|yesno:"true,false" }}
+  };
+</script>
+<script src="{% static 'payments/js/pay.js' %}"></script>
+{% endblock %}

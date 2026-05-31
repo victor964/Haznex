@@ -1,0 +1,341 @@
+{% extends "store/base.html" %}
+{% load static store_tags %}
+{% block title %}Haznex | EX-UK Products Delivered to Kenya{% endblock %}
+{% block content %}
+<section class="bg-white py-20 lg:py-28">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <h1 class="mx-auto max-w-4xl break-words text-3xl font-bold leading-tight text-haznex-text sm:text-4xl lg:text-5xl" id="hero-headline">
+      Get EX-UK Products Directly From the UK
+    </h1>
+    <div class="mx-auto mt-4 h-1 w-32 bg-gold" id="hero-underline"></div>
+    <p class="hero-sub mx-auto mt-6 max-w-2xl text-lg text-haznex-muted" id="hero-sub">
+      Browse genuine UK products sourced, shipped, and delivered to your door in Kenya
+    </p>
+    <a
+      href="{% url 'store:product_list' %}"
+      id="hero-browse-btn"
+      class="btn-gold text-base px-8 py-4"
+      style="display: block; margin: 2rem auto 0; width: fit-content;"
+    >Browse Products</a>
+  </div>
+</section>
+<section class="border-y border-haznex-border bg-haznex-bg py-12" id="trust-bar">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-3">
+      <div class="trust-item text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/15">
+          <svg class="h-7 w-7 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-haznex-text">Genuine UK Sourcing</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Every EX-UK product is verified and sourced directly from trusted UK sellers.</p>
+      </div>
+      <div class="trust-item text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/15">
+          <svg class="h-7 w-7 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-haznex-text">Tracked Every Step</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Follow your order from payment to delivery with real-time status updates.</p>
+      </div>
+      <div class="trust-item text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/15">
+          <svg class="h-7 w-7 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-haznex-text">M-Pesa Payments</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Pay securely via M-Pesa, the quick and familiar option trusted across Kenya.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="py-16" id="featured-products">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-10 text-center">
+      <h2 class="text-3xl font-bold text-haznex-text">Featured Products</h2>
+      <p class="mt-2 text-haznex-muted">Handpicked items ready to order</p>
+    </div>
+    {% if featured_products %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for product in featured_products %}
+      <div class="featured-card">
+        {% include "store/partials/_product_card.html" with product=product %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-10 text-center">
+      <a href="{% url 'store:product_list' %}" class="btn-outline-gold">View All Products</a>
+    </div>
+    {% else %}
+    <p class="text-center text-haznex-muted">New products coming soon. Check back shortly!</p>
+    {% endif %}
+  </div>
+</section>
+<section class="bg-haznex-bg py-16" id="how-it-works">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-12 text-center">
+      <h2 class="text-3xl font-bold text-haznex-text">How It Works</h2>
+      <p class="mt-2 text-haznex-muted">Three simple steps to get your UK product in Kenya</p>
+    </div>
+    <div class="grid gap-8 md:grid-cols-3">
+      <div class="how-step text-center">
+        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg font-bold text-white">1</div>
+        <h3 class="font-semibold text-haznex-text">Browse &amp; Order</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Find your product, choose air or sea shipping, and place your order.</p>
+      </div>
+      <div class="how-step text-center">
+        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg font-bold text-white">2</div>
+        <h3 class="font-semibold text-haznex-text">We Source in the UK</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Once payment is confirmed, our UK team sources and ships your item.</p>
+      </div>
+      <div class="how-step text-center">
+        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg font-bold text-white">3</div>
+        <h3 class="font-semibold text-haznex-text">Delivered to Kenya</h3>
+        <p class="mt-2 text-sm text-haznex-muted">Track every step until your product arrives at your door in Kenya.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="bg-gold py-16 overflow-hidden" id="cta-banner">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Ready to order your UK product?</h2>
+    <p class="mt-3 text-white/90">Start browsing now and get EX-UK products delivered to your door.</p>
+    <div class="mt-8">
+      <a href="{% url 'store:product_list' %}" id="cta-banner-btn" class="btn-white">Start Browsing</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+  "use strict";
+  if (typeof gsap === "undefined") return;
+  if (typeof ScrollTrigger !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+  function wrapHeadlineWords(headlineEl) {
+    var text = headlineEl.textContent.trim();
+    var words = text.split(/\s+/);
+    headlineEl.textContent = "";
+    words.forEach(function (word, index) {
+      var span = document.createElement("span");
+      span.className = "inline-block";
+      span.textContent = word;
+      headlineEl.appendChild(span);
+      if (index < words.length - 1) {
+        headlineEl.appendChild(document.createTextNode(" "));
+      }
+    });
+    return headlineEl.querySelectorAll("span");
+  }
+  function initHomeAnimations() {
+    var navbar = document.getElementById("site-navbar");
+    var headlineEl = document.getElementById("hero-headline");
+    var sub = document.getElementById("hero-sub");
+    var heroBtn = document.getElementById("hero-browse-btn");
+    var ctaBanner = document.getElementById("cta-banner");
+    var ctaBtn = document.getElementById("cta-banner-btn");
+    var heroWords = headlineEl ? wrapHeadlineWords(headlineEl) : [];
+    if (navbar) {
+      gsap.set(navbar, { y: -80, opacity: 0 });
+    }
+    if (heroWords.length) {
+      gsap.set(heroWords, { y: 60, opacity: 0 });
+    }
+    if (sub) {
+      gsap.set(sub, { y: 30, opacity: 0 });
+    }
+    if (heroBtn) {
+      gsap.set(heroBtn, { scale: 0.8, opacity: 0, transformOrigin: "center center" });
+    }
+    if (ctaBtn) {
+      gsap.set(ctaBtn, { scale: 0, opacity: 0, transformOrigin: "center center" });
+    }
+    var master = gsap.timeline();
+    if (navbar) {
+      master.fromTo(
+        navbar,
+        { y: -80, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
+      );
+    }
+    var heroTl = gsap.timeline();
+    if (heroWords.length) {
+      heroTl.fromTo(
+        heroWords,
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.65,
+          stagger: 0.08,
+          ease: "power3.out",
+        }
+      );
+    }
+    if (sub) {
+      heroTl.fromTo(
+        sub,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power2.out" }
+      );
+    }
+    if (heroBtn) {
+      heroTl.fromTo(
+        heroBtn,
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" }
+      );
+      heroTl.add(
+        gsap.to(heroBtn, {
+          y: -6,
+          repeat: -1,
+          yoyo: true,
+          duration: 1.8,
+          ease: "sine.inOut",
+        })
+      );
+    }
+    master.add(heroTl);
+    if (typeof ScrollTrigger === "undefined") return;
+    if (navbar) {
+      ScrollTrigger.create({
+        start: "50px top",
+        onEnter: function () {
+          gsap.to(navbar, {
+            boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        },
+        onLeaveBack: function () {
+          gsap.to(navbar, {
+            boxShadow: "0 0 0 rgba(0, 0, 0, 0)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        },
+      });
+    }
+    gsap.fromTo(
+      ".trust-item",
+      { y: 40, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#trust-bar",
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+    document.querySelectorAll(".trust-item").forEach(function (card) {
+      card.addEventListener("mouseenter", function () {
+        gsap.to(card, { y: -8, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+      });
+      card.addEventListener("mouseleave", function () {
+        gsap.to(card, { y: 0, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+      });
+    });
+    gsap.fromTo(
+      ".featured-card",
+      { y: 50, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.55,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#featured-products",
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+    var goldShadow = "0 16px 40px rgba(201, 162, 39, 0.35)";
+    document.querySelectorAll(".featured-card").forEach(function (card) {
+      gsap.set(card, { transformOrigin: "center center" });
+      card.addEventListener("mouseenter", function () {
+        gsap.to(card, {
+          scale: 1.03,
+          boxShadow: goldShadow,
+          duration: 0.35,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+      card.addEventListener("mouseleave", function () {
+        gsap.to(card, {
+          scale: 1,
+          boxShadow: "0 0 0 rgba(0, 0, 0, 0)",
+          duration: 0.35,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+    });
+    gsap.fromTo(
+      ".how-step",
+      { x: -30, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#how-it-works",
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+    if (ctaBanner) {
+      gsap.set(ctaBanner, { transformOrigin: "center center" });
+      gsap.fromTo(
+        ctaBanner,
+        { scale: 0.97 },
+        {
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ctaBanner,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+    if (ctaBtn) {
+      gsap.fromTo(
+        ctaBtn,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.9,
+          ease: "elastic.out(1, 0.5)",
+          scrollTrigger: {
+            trigger: ctaBanner || ctaBtn,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+  }
+  document.addEventListener("DOMContentLoaded", initHomeAnimations);
+})();
+</script>
+{% endblock %}

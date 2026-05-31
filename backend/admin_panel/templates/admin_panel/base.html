@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Haznex Admin{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'admin_panel/css/haznex.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="haznex-layout">
+  <header class="haznex-mobile-bar" aria-label="Admin navigation">
+    <button type="button" class="haznex-mobile-menu-btn" id="haznex-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="haznex-sidebar">
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <a href="{% url 'admin_panel:dashboard' %}" class="haznex-mobile-brand">Haznex</a>
+  </header>
+  <div class="haznex-sidebar-overlay" id="haznex-sidebar-overlay" hidden></div>
+  <aside class="haznex-sidebar" id="haznex-sidebar">
+    <div class="haznex-sidebar-brand">
+      <a href="{% url 'admin_panel:dashboard' %}">Haznex</a>
+      <span class="haznex-sidebar-tagline">VH Bridge</span>
+    </div>
+    <nav class="haznex-nav">
+      <a href="{% url 'admin_panel:dashboard' %}" class="haznex-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+      {% block nav_products %}{% endblock %}
+      {% block nav_orders %}{% endblock %}
+    </nav>
+    <div class="haznex-sidebar-footer">
+      <span class="haznex-user">{{ user.get_username }}</span>
+      <form method="post" action="{% url 'admin_panel:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="haznex-btn haznex-btn-secondary haznex-btn-sm">Logout</button>
+      </form>
+    </div>
+  </aside>
+  <main class="haznex-main">
+    <header class="haznex-header">
+      <h1 class="haznex-page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+      {% block header_extra %}{% endblock %}
+    </header>
+
+    {% if messages %}
+    <div class="haznex-messages">
+      {% for message in messages %}
+      <div class="haznex-alert haznex-alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="haznex-content">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+  <script src="{% static 'admin_panel/js/haznex.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

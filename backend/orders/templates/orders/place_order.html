@@ -1,0 +1,93 @@
+{% extends "store/base.html" %}
+{% load static store_tags %}
+
+{% block title %}Place Order | {{ product.name }} | Haznex{% endblock %}
+
+{% block content %}
+<section class="py-12">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-haznex-text">Confirm Your Order</h1>
+    <p class="mt-2 text-haznex-muted">Review your product and delivery details before confirming</p>
+
+    <div class="mt-8 rounded-xl border border-haznex-border p-6">
+      <div class="flex gap-4">
+        {% with img=product.primary_image %}
+        {% if img %}
+        <img src="{{ img.image.url }}" alt="{{ product.name }}" class="h-24 w-24 rounded-lg object-cover">
+        {% endif %}
+        {% endwith %}
+        <div>
+          <h2 class="font-semibold text-haznex-text">{{ product.name }}</h2>
+          <p class="mt-1 text-gold-dark font-bold">{{ product.final_client_price|kes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <form method="post" class="mt-8 space-y-6">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div class="alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="rounded-xl border border-haznex-border p-6">
+        <h2 class="text-lg font-semibold text-haznex-text">Shipping Method</h2>
+        <div class="mt-4 space-y-3">
+          {% for item in options_with_cost %}
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-haznex-border p-4 transition hover:border-gold">
+            <input
+              type="radio"
+              name="shipping_method"
+              value="{{ item.option.pk }}"
+              class="mt-1 shipping-radio"
+              {% if forloop.first %}checked{% endif %}
+              {% if form.shipping_method.value == item.option.pk|stringformat:"s" %}checked{% endif %}
+            >
+            <div class="flex-1">
+              <span class="font-semibold">{{ item.option.name }}</span>
+              <span class="block text-sm text-haznex-muted">{{ item.option.estimated_delivery_days }} days</span>
+              <span class="block text-sm font-medium text-gold-dark">Shipping: {{ item.cost|kes }}</span>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+        {% if form.shipping_method.errors %}
+        <p class="form-error">{{ form.shipping_method.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label for="{{ form.delivery_address.id_for_label }}" class="form-label">Delivery Address</label>
+        {{ form.delivery_address }}
+        {% if form.delivery_address.errors %}
+        <p class="form-error">{{ form.delivery_address.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="rounded-xl border border-haznex-border p-6">
+        <div class="flex justify-between text-sm">
+          <span class="text-haznex-muted">Product price</span>
+          <span>{{ product.final_client_price|kes }}</span>
+        </div>
+        <div class="mt-2 flex justify-between text-sm">
+          <span class="text-haznex-muted">Shipping</span>
+          <span id="selected-shipping-cost">N/A</span>
+        </div>
+        <div class="mt-4 flex justify-between text-lg font-bold border-t border-haznex-border pt-4">
+          <span>Order Total</span>
+          <span class="text-gold-dark" id="order-total">N/A</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-gold w-full text-base py-4">Confirm Order</button>
+    </form>
+  </div>
+</section>
+
+<script id="place-order-data" type="application/json">
+{"unitPrice": {{ unit_price|default:"null" }}, "shippingCosts": {{ shipping_costs_json|safe }}}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'orders/js/place-order.js' %}"></script>
+{% endblock %}

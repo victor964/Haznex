@@ -1,0 +1,83 @@
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+{% block title %}Edit {{ product.name }} | Haznex{% endblock %}
+{% block page_title %}Edit product{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <h2>Product & pricing</h2>
+  <p class="haznex-muted">All fee fields in GBP (£). Final client price in KES. <span id="exchange-rate-hint">1 GBP = {{ gbp_to_kes_rate }} KES</span></p>
+  <div class="haznex-final-price-box">
+    <span class="haznex-card-label">Subtotal (GBP)</span>
+    <span class="haznex-gbp-subtotal" id="gbp-subtotal-display">0.00 GBP</span>
+    <span class="haznex-card-label" style="margin-top:0.75rem;display:block;">Final client price</span>
+    <span class="haznex-final-price-display" id="final-price-display">0.00 KES</span>
+  </div>
+  <form method="post" class="haznex-form" id="product-edit-form" data-gbp-to-kes-rate="{{ gbp_to_kes_rate }}">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="haznex-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {{ field.errors }}
+    </div>
+    {% endfor %}
+    <div class="haznex-form-actions">
+      <button type="submit" class="haznex-btn haznex-btn-primary">Save changes</button>
+      <a href="{% url 'admin_panel:product_list' %}" class="haznex-btn haznex-btn-secondary">Cancel</a>
+    </div>
+  </form>
+</section>
+
+<section class="haznex-section">
+  <h2>Images</h2>
+  <div class="haznex-image-previews">
+    {% for image in images %}
+    <div class="haznex-preview-item">
+      <img src="{{ image.image.url }}" alt="{{ image.alt_text }}">
+      {% if image.is_primary %}<span class="haznex-tag haznex-tag-active">Primary</span>{% endif %}
+      <form method="post" class="haznex-image-actions">
+        {% csrf_token %}
+        {% if not image.is_primary %}
+        <button type="submit" name="set_primary" value="{{ image.pk }}" class="haznex-link-btn">Set primary</button>
+        {% endif %}
+        <button type="submit" name="delete_image" value="{{ image.pk }}" class="haznex-danger-link" onclick="return confirm('Remove this image?');">Remove</button>
+      </form>
+    </div>
+    {% empty %}
+    <p class="haznex-muted">No images yet.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="haznex-form">
+    {% csrf_token %}
+    <div class="haznex-field">
+      <label for="id_images">Add images</label>
+      <input type="file" name="images" id="id_images" class="haznex-input" multiple accept="image/*">
+    </div>
+    <div id="image-preview-container" class="haznex-image-previews"></div>
+    <div class="haznex-field">
+      {{ image_form.primary_index.label_tag }}
+      {{ image_form.primary_index }}
+    </div>
+    <div class="haznex-field haznex-checkbox-field">
+      <input type="checkbox" name="replace_primary" id="replace_primary">
+      <label for="replace_primary">Set new upload as primary</label>
+    </div>
+    <button type="submit" class="haznex-btn haznex-btn-secondary">Add images</button>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.HAZNEX_GBP_TO_KES = {{ gbp_to_kes_rate }};
+</script>
+<script src="{% static 'admin_panel/js/image_preview.js' %}"></script>
+<script src="{% static 'admin_panel/js/price_calculator.js' %}?v=4"></script>
+{% endblock %}

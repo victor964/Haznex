@@ -1,0 +1,96 @@
+{% extends "admin_panel/base.html" %}
+{% load order_tags %}
+
+{% block title %}Orders | Haznex{% endblock %}
+{% block page_title %}Orders{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block nav_orders %}
+{% include "admin_panel/orders/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="haznex-filter-pills">
+  <a href="?q={{ search_q }}&status={{ filter_status }}" class="haznex-filter-pill {% if not quick_filter %}active{% endif %}">All</a>
+  <a href="?filter=needs_payment&q={{ search_q }}&status={{ filter_status }}" class="haznex-filter-pill {% if quick_filter == 'needs_payment' %}active{% endif %}">Needs Payment</a>
+  <a href="?filter=active&q={{ search_q }}&status={{ filter_status }}" class="haznex-filter-pill {% if quick_filter == 'active' %}active{% endif %}">Active</a>
+  <a href="?filter=completed&q={{ search_q }}&status={{ filter_status }}" class="haznex-filter-pill {% if quick_filter == 'completed' %}active{% endif %}">Completed</a>
+  <a href="?filter=cancelled&q={{ search_q }}&status={{ filter_status }}" class="haznex-filter-pill {% if quick_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+</div>
+
+<form method="get" class="haznex-filters">
+  {% if quick_filter %}<input type="hidden" name="filter" value="{{ quick_filter }}">{% endif %}
+  <input type="search" name="q" value="{{ search_q }}" placeholder="Order # or client" class="haznex-input">
+  <select name="status" class="haznex-input">
+    <option value="">All statuses</option>
+    {% for value, label in status_choices %}
+    <option value="{{ value }}" {% if filter_status == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="haznex-btn haznex-btn-secondary">Filter</button>
+</form>
+
+<section class="haznex-section">
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Product</th>
+        <th>Client</th>
+        <th>Shipping</th>
+        <th>Total (KES)</th>
+        <th>Status</th>
+        <th>Days active</th>
+        <th>Last updated</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in order_rows %}
+      <tr class="{% if row.is_stale %}haznex-row-stale{% endif %}">
+        <td>{{ row.order.order_number }}</td>
+        <td>{{ row.order.product.name }}</td>
+        <td>{{ row.order.client.get_username }}</td>
+        <td>{{ row.order.shipping_method.name }}</td>
+        <td>{{ row.order.total_price }}</td>
+        <td>
+          <span class="haznex-status-badge {{ row.order.status|admin_order_status_badge_class }}">
+            {{ row.order.get_status_display }}
+          </span>
+        </td>
+        <td>{{ row.days_active }}</td>
+        <td>
+          {% if row.order.last_status_update_at %}
+          {{ row.order.last_status_update_at|date:"M j, Y H:i" }}
+          {% else %}N/A{% endif %}
+        </td>
+        <td>{{ row.order.created_at|date:"M j, Y H:i" }}</td>
+        <td><a href="{% url 'admin_panel:order_detail' row.order.pk %}">View</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="10" class="haznex-muted">No orders yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="haznex-pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}&filter={{ quick_filter }}&status={{ filter_status }}&q={{ search_q }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&filter={{ quick_filter }}&status={{ filter_status }}&q={{ search_q }}">Next</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

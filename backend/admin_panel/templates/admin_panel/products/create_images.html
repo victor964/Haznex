@@ -1,0 +1,52 @@
+{% extends "admin_panel/base.html" %}
+{% load static %}
+
+{% block title %}New Product | Images | Haznex{% endblock %}
+{% block page_title %}New Product | Step 3 of 3{% endblock %}
+
+{% block nav_products %}{% include "admin_panel/products/_nav.html" %}{% endblock %}
+{% block nav_orders %}{% include "admin_panel/orders/_nav.html" %}{% endblock %}
+
+{% block content %}
+<div class="haznex-wizard-steps">
+  <span class="haznex-step">1. Details</span>
+  <span class="haznex-step">2. Pricing</span>
+  <span class="haznex-step active">3. Images</span>
+</div>
+
+<section class="haznex-section">
+  <h2>Upload images</h2>
+  <p class="haznex-muted">Images upload to Cloudinary (vhbridge/products). Mark which file is primary by index (0 = first).</p>
+
+  <form method="post" enctype="multipart/form-data" class="haznex-form">
+    {% csrf_token %}
+
+    <div class="haznex-field">
+      <label for="id_images">Product images</label>
+      <input type="file" name="images" id="id_images" class="haznex-input" multiple accept="image/*">
+      <p class="haznex-help">Select one or more images.</p>
+    </div>
+
+    <div id="image-preview-container" class="haznex-image-previews"></div>
+
+    <div class="haznex-field">
+      {{ form.primary_index.label_tag }}
+      {{ form.primary_index }}
+      {{ form.primary_index.errors }}
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="haznex-alert haznex-alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="haznex-form-actions">
+      <a href="{% url 'admin_panel:product_create_pricing' %}" class="haznex-btn haznex-btn-secondary">Back</a>
+      <button type="submit" class="haznex-btn haznex-btn-primary">Save product</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'admin_panel/js/image_preview.js' %}"></script>
+{% endblock %}

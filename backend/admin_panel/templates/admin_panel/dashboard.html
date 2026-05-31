@@ -1,0 +1,180 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Dashboard | Haznex Admin{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block header_extra %}
+{% if pending_payment_count > 0 %}
+<a href="{% url 'admin_panel:order_list' %}?status=payment_pending" class="haznex-badge">
+  {{ pending_payment_count }} awaiting payment
+</a>
+{% endif %}
+{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block nav_orders %}
+{% include "admin_panel/orders/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="haznex-cards">
+  <div class="haznex-card">
+    <span class="haznex-card-label">Total products</span>
+    <span class="haznex-card-value">{{ total_products }}</span>
+  </div>
+  <div class="haznex-card">
+    <span class="haznex-card-label">Active products</span>
+    <span class="haznex-card-value">{{ active_products }}</span>
+  </div>
+  <div class="haznex-card">
+    <span class="haznex-card-label">Total orders</span>
+    <span class="haznex-card-value">{{ total_orders }}</span>
+  </div>
+  <div class="haznex-card {% if pending_payment_count > 0 %}haznex-card-highlight{% endif %}">
+    <span class="haznex-card-label">Payment pending (24h)</span>
+    <span class="haznex-card-value">{{ pending_payment_count }}</span>
+    {% if pending_payment_count > 0 %}
+    <a href="{% url 'admin_panel:order_list' %}?status=payment_pending" class="haznex-card-link">Review orders</a>
+    {% endif %}
+  </div>
+  <div class="haznex-card haznex-card-gold">
+    <span class="haznex-card-label">Orders completed</span>
+    <span class="haznex-card-value">{{ orders_completed }}</span>
+  </div>
+</div>
+
+<section class="haznex-section">
+  <h2>Orders by status</h2>
+  {% if orders_by_status %}
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in orders_by_status %}
+      <tr>
+        <td>{{ row.label }}</td>
+        <td>{{ row.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p class="haznex-muted">No orders yet.</p>
+  {% endif %}
+</section>
+
+<section class="haznex-section">
+  <h2>Recent orders needing action</h2>
+  {% if recent_action_orders %}
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Product</th>
+        <th>Client</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in recent_action_orders %}
+      <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.product.name }}</td>
+        <td>{{ order.client.get_username }}</td>
+        <td>{{ order.get_status_display }}</td>
+        <td><a href="{% url 'admin_panel:order_detail' order.pk %}">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p class="haznex-muted">No open orders right now.</p>
+  {% endif %}
+</section>
+
+<section class="haznex-section">
+  <h2>Orders needing action</h2>
+  {% if orders_needing_action %}
+  <div class="haznex-action-groups">
+    {% for group in orders_needing_action %}
+    <details class="haznex-action-card {{ group.card_class }}" {% if group.status == 'payment_pending' %}open{% endif %}>
+      <summary class="haznex-action-summary">
+        <span class="haznex-action-title">{{ group.label }}</span>
+        <span class="haznex-action-count">{{ group.count }} order{{ group.count|pluralize }}</span>
+      </summary>
+      <div class="haznex-table-scroll">
+      <table class="haznex-table haznex-table-compact">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Product</th>
+            <th>Client</th>
+            <th>Created</th>
+            <th>Days since update</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in group.orders %}
+          <tr>
+            <td><a href="{% url 'admin_panel:order_detail' order.pk %}">{{ order.order_number }}</a></td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.client.get_username }}</td>
+            <td>{{ order.created_at|date:"M j, Y" }}</td>
+            <td>{{ order.days_since_update }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="haznex-muted">No active orders needing action.</p>
+  {% endif %}
+</section>
+
+<section class="haznex-section">
+  <h2>Recent activity</h2>
+  {% if recent_activity %}
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>When</th>
+        <th>Order</th>
+        <th>Status</th>
+        <th>Admin</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for update in recent_activity %}
+      <tr>
+        <td>{{ update.created_at|date:"M j, Y H:i" }}</td>
+        <td><a href="{% url 'admin_panel:order_detail' update.order.pk %}">{{ update.order.order_number }}</a></td>
+        <td>{{ update.get_status_display }}</td>
+        <td>{% if update.updated_by %}{{ update.updated_by.get_username }}{% else %}N/A{% endif %}</td>
+        <td class="haznex-note-truncate">{{ update.note|truncatechars:80 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p class="haznex-muted">No status updates yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

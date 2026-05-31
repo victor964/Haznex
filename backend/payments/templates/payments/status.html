@@ -1,0 +1,65 @@
+{% extends "store/base.html" %}
+{% load store_tags %}
+
+{% block title %}Payment Status | {{ order.order_number }} | Haznex{% endblock %}
+
+{% block extra_head %}
+<meta http-equiv="refresh" content="10">
+{% endblock %}
+
+{% block content %}
+<section class="py-12">
+  <div class="mx-auto max-w-lg px-4 sm:px-6 lg:px-8 text-center">
+    <p class="text-sm text-haznex-muted">Order {{ order.order_number }}</p>
+
+    {% if not payment %}
+    <h1 class="mt-4 text-2xl font-bold text-haznex-text">No payment started</h1>
+    <p class="mt-4 text-haznex-muted">You have not started payment for this order yet.</p>
+    <a href="{% url 'payments:pay' order_number=order.order_number %}" class="btn-gold mt-8 inline-block px-8 py-3">
+      Pay now
+    </a>
+    {% elif payment.status == 'completed' %}
+    <div class="mt-6 rounded-xl border-2 border-gold bg-gold/15 p-8">
+      <h1 class="text-2xl font-bold text-gold-dark">Payment confirmed</h1>
+      <p class="mt-2 text-haznex-text">Your M-Pesa payment was received successfully.</p>
+      {% if payment.mpesa_receipt_number %}
+      <p class="mt-4 text-sm text-haznex-muted">
+        M-Pesa receipt: <strong class="text-haznex-text">{{ payment.mpesa_receipt_number }}</strong>
+      </p>
+      {% endif %}
+    </div>
+    {% elif payment.status == 'failed' %}
+    <div class="mt-6 rounded-xl border border-red-200 bg-red-50 p-8">
+      <h1 class="text-2xl font-bold text-red-800">Payment failed</h1>
+      <p class="mt-2 text-sm text-haznex-muted">Please try again or use manual confirmation on the pay page.</p>
+      <a href="{% url 'payments:pay' order_number=order.order_number %}" class="btn-gold mt-6 inline-block px-6 py-3">
+        Try again
+      </a>
+    </div>
+    {% else %}
+    <div class="mt-6 rounded-xl border border-haznex-border p-8">
+      <span class="inline-block rounded-full bg-gold/20 px-4 py-1 text-sm font-semibold text-gold-dark">
+        {{ payment.get_status_display }}
+      </span>
+      <h1 class="mt-4 text-xl font-bold text-haznex-text">Awaiting confirmation</h1>
+      <p class="mt-2 text-sm text-haznex-muted">
+        {% if payment.manually_confirmed %}
+        We received your payment notification. An admin will verify it shortly.
+        {% elif payment.stk_push_initiated %}
+        Complete the M-Pesa prompt on your phone, or confirm manually if you have already paid.
+        {% else %}
+        Complete payment on the pay page, then confirm when done.
+        {% endif %}
+      </p>
+      <p class="mt-4 text-xs text-haznex-muted">This page refreshes every 10 seconds.</p>
+    </div>
+    {% endif %}
+
+    <div class="mt-10">
+      <a href="{% url 'orders:order_detail' order_number=order.order_number %}" class="text-sm font-medium text-gold-dark hover:underline">
+        Track your order &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

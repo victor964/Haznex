@@ -1,0 +1,6 @@
+{% extends "orders/emails/base_email.html" %}
+{% block email_title %}Shipped from UK | {{ order_number }}{% endblock %}
+{% block email_body %}
+<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1a1a1a;">Great news: your item has been shipped from the UK and is on its way to Kenya.</p>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#4b4b4b;">We will notify you when it is in transit and as it progresses through customs and local delivery.</p>
+{% endblock %}

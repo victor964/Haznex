@@ -1,0 +1,105 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}{{ order.order_number }} | Haznex{% endblock %}
+{% block page_title %}Order {{ order.order_number }}{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block nav_orders %}
+{% include "admin_panel/orders/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <h2>Order details</h2>
+  <table class="haznex-table haznex-detail-table">
+    <tbody>
+      <tr><th>Order number</th><td>{{ order.order_number }}</td></tr>
+      <tr><th>Product</th><td>{{ order.product.name }}</td></tr>
+      <tr><th>Client</th><td>{{ order.client.get_username }}</td></tr>
+      <tr><th>Shipping method</th><td>{{ order.shipping_method.name }}</td></tr>
+      <tr><th>Quantity</th><td>{{ order.quantity }}</td></tr>
+      <tr><th>Delivery address</th><td>{{ order.delivery_address|linebreaksbr }}</td></tr>
+      <tr><th>Unit price (KES)</th><td>{{ order.unit_price }}</td></tr>
+      <tr><th>Shipping fee (KES)</th><td>{{ order.shipping_fee }}</td></tr>
+      <tr><th>Local delivery (KES)</th><td>{{ order.local_delivery_fee }}</td></tr>
+      <tr><th>Total price (KES)</th><td><strong>{{ order.total_price }}</strong></td></tr>
+      <tr><th>Current status</th><td><strong>{{ order.get_status_display }}</strong></td></tr>
+      <tr><th>Placed at</th><td>{{ order.created_at }}</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="haznex-section">
+  <h2>Payment</h2>
+  {% if payment %}
+  <table class="haznex-table haznex-detail-table">
+    <tbody>
+      <tr><th>Phone</th><td>{{ payment.phone_number }}</td></tr>
+      <tr><th>Amount (KES)</th><td>{{ payment.amount }}</td></tr>
+      <tr><th>Status</th><td><strong>{{ payment.get_status_display }}</strong></td></tr>
+      <tr><th>STK Push sent</th><td>{% if payment.stk_push_initiated %}Yes{% else %}No{% endif %}</td></tr>
+      <tr><th>Client manual confirm</th><td>{% if payment.manually_confirmed %}Yes{% else %}No{% endif %}</td></tr>
+      <tr><th>M-Pesa receipt</th><td>{{ payment.mpesa_receipt_number|default:"N/A" }}</td></tr>
+    </tbody>
+  </table>
+  {% if payment.status != 'completed' %}
+  <form method="post" action="{% url 'admin_panel:confirm_payment' pk=order.pk %}" class="haznex-form" style="margin-top: 1rem;">
+    {% csrf_token %}
+    <button type="submit" class="haznex-btn haznex-btn-primary">Confirm Payment</button>
+  </form>
+  {% endif %}
+  {% else %}
+  <p class="haznex-muted">No payment record yet.</p>
+  {% endif %}
+</section>
+
+<section class="haznex-section">
+  <h2>Status timeline</h2>
+  <ul class="haznex-timeline">
+    {% for update in status_updates %}
+    <li class="haznex-timeline-item">
+      <span class="haznex-timeline-status">{{ update.get_status_display }}</span>
+      <span class="haznex-timeline-time">{{ update.created_at }}</span>
+      <p class="haznex-timeline-note">{{ update.note }}</p>
+      {% if update.updated_by %}
+      <span class="haznex-muted">({{ update.updated_by.get_username }})</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% if status_form %}
+<section class="haznex-section">
+  <h2>Update status</h2>
+  <form method="post" class="haznex-form">
+    {% csrf_token %}
+    <div class="haznex-field">
+      {{ status_form.status.label_tag }}
+      {{ status_form.status }}
+      {{ status_form.status.errors }}
+    </div>
+    <div class="haznex-field">
+      {{ status_form.note.label_tag }}
+      {{ status_form.note }}
+      {{ status_form.note.errors }}
+    </div>
+    <button type="submit" class="haznex-btn haznex-btn-primary">Update status</button>
+  </form>
+</section>
+{% else %}
+<p class="haznex-muted">This order is closed, so no further status updates are available.</p>
+{% endif %}
+
+{% if status_form %}
+<section class="haznex-section">
+  <h2>Danger zone</h2>
+  <a href="{% url 'admin_panel:cancel_order' pk=order.pk %}" class="haznex-btn haznex-btn-danger">Cancel order</a>
+</section>
+{% endif %}
+
+<p><a href="{% url 'admin_panel:order_list' %}">← Back to orders</a></p>
+{% endblock %}

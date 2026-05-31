@@ -1,0 +1,20 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Delete {{ product.name }} | Haznex{% endblock %}
+{% block page_title %}Delete product{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <p>Are you sure you want to delete <strong>{{ product.name }}</strong>?</p>
+  <p class="haznex-muted">Products with existing orders cannot be deleted.</p>
+  <form method="post" class="haznex-form-actions">
+    {% csrf_token %}
+    <button type="submit" class="haznex-btn haznex-btn-danger">Yes, delete</button>
+    <a href="{% url 'admin_panel:product_list' %}" class="haznex-btn haznex-btn-secondary">Cancel</a>
+  </form>
+</section>
+{% endblock %}

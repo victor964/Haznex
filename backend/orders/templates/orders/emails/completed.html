@@ -1,0 +1,6 @@
+{% extends "orders/emails/base_email.html" %}
+{% block email_title %}Order delivered | {{ order_number }}{% endblock %}
+{% block email_body %}
+<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#1a1a1a;">Your Haznex order has been delivered. Thank you for trusting us to bring EX-UK products to your door in Kenya.</p>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#4b4b4b;">We hope you love your purchase. When you are ready for your next item, browse our storefront and place a new order anytime.</p>
+{% endblock %}

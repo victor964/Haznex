@@ -1,0 +1,31 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Cancel {{ order.order_number }} | Haznex{% endblock %}
+{% block page_title %}Cancel order{% endblock %}
+
+{% block nav_products %}
+{% include "admin_panel/products/_nav.html" %}
+{% endblock %}
+
+{% block nav_orders %}
+{% include "admin_panel/orders/_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="haznex-section haznex-cancel-warning">
+  <h2>Cancel order {{ order.order_number }}?</h2>
+  <p>This will mark the order as <strong>Cancelled</strong> and notify the client by email (if email notifications are enabled).</p>
+  <table class="haznex-table haznex-detail-table">
+    <tbody>
+      <tr><th>Product</th><td>{{ order.product.name }}</td></tr>
+      <tr><th>Client</th><td>{{ order.client.get_username }}</td></tr>
+      <tr><th>Current status</th><td>{{ order.get_status_display }}</td></tr>
+    </tbody>
+  </table>
+  <form method="post" class="haznex-form" style="margin-top: 1.25rem;">
+    {% csrf_token %}
+    <button type="submit" class="haznex-btn haznex-btn-danger">Yes, cancel this order</button>
+    <a href="{% url 'admin_panel:order_detail' order.pk %}" class="haznex-btn haznex-btn-secondary" style="margin-left: 0.5rem;">Go back</a>
+  </form>
+</section>
+{% endblock %}

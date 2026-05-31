@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% block meta_description %}
+  <meta name="description" content="Haznex — Get genuine EX-UK products sourced directly from the UK and delivered to your door in Kenya. Browse phones, laptops, gaming, appliances and more.">
+  {% endblock %}
+  <meta name="keywords" content="UK products Kenya, EX-UK, import UK to Kenya, M-Pesa shopping, Haznex">
+  <meta property="og:type" content="website">
+  {% block og_title %}
+  <meta property="og:title" content="Haznex | EX-UK Products Delivered to Kenya">
+  {% endblock %}
+  {% block og_description %}
+  <meta property="og:description" content="Haznex — Get genuine EX-UK products sourced directly from the UK and delivered to your door in Kenya. Browse phones, laptops, gaming, appliances and more.">
+  {% endblock %}
+  <meta property="og:url" content="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+  {% block og_image %}{% endblock %}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{% block twitter_title %}Haznex | EX-UK Products Delivered to Kenya{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Haznex — Get genuine EX-UK products sourced directly from the UK and delivered to your door in Kenya. Browse phones, laptops, gaming, appliances and more.{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+  <title>{% block title %}Haznex | EX-UK Products Delivered to Kenya{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'store/css/storefront.css' %}">
+  {% block extra_head %}{% endblock %}
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="flex min-h-screen flex-col">
+  <div id="page-loader" class="fixed top-0 left-0 z-[100] h-0.5 bg-gold" style="width:0" aria-hidden="true"></div>
+  <header id="site-navbar" class="sticky top-0 z-40 border-b border-haznex-border bg-white/95 backdrop-blur-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <a href="{% url 'store:home' %}" class="text-2xl font-bold tracking-wide text-gold-dark">Haznex</a>
+
+      <nav class="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+        <a href="{% url 'store:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}nav-link-active{% endif %}">Home</a>
+        <a href="{% url 'store:product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'product_list' or request.resolver_match.url_name == 'product_detail' %}nav-link-active{% endif %}">Products</a>
+        {% if user.is_authenticated %}
+          {% if user.profile.is_admin %}
+          {% else %}
+          <a href="{% url 'orders:order_list' %}" class="nav-link {% if request.resolver_match.namespace == 'orders' %}nav-link-active{% endif %}">My Orders</a>
+          <form method="post" action="{% url 'accounts:logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="nav-link">Logout</button>
+          </form>
+          {% endif %}
+        {% else %}
+        <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
+        <a href="{% url 'accounts:register' %}" class="btn-gold px-4 py-2 text-xs">Register</a>
+        {% endif %}
+      </nav>
+
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="inline-flex items-center justify-center rounded-lg p-2 text-haznex-text hover:bg-haznex-bg md:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="mobile-menu-overlay" class="fixed inset-0 z-50 hidden bg-black/40 md:hidden" aria-hidden="true"></div>
+  <nav
+    id="mobile-menu"
+    class="fixed right-0 top-0 z-50 flex h-full w-72 translate-x-full flex-col bg-white shadow-xl md:hidden"
+    aria-label="Mobile navigation"
+  >
+    <div class="flex items-center justify-between border-b border-haznex-border px-6 py-4">
+      <span class="text-xl font-bold text-gold-dark">Haznex</span>
+      <button type="button" id="mobile-menu-close" class="rounded-lg p-2 hover:bg-haznex-bg" aria-label="Close menu">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="flex flex-col gap-1 px-4 py-6">
+      <a href="{% url 'store:home' %}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-haznex-bg">Home</a>
+      <a href="{% url 'store:product_list' %}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-haznex-bg">Products</a>
+      {% if user.is_authenticated %}
+        {% if not user.profile.is_admin %}
+        <a href="{% url 'orders:order_list' %}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-haznex-bg">My Orders</a>
+        <form method="post" action="{% url 'accounts:logout' %}" class="px-4 pt-2">
+          {% csrf_token %}
+          <button type="submit" class="w-full rounded-lg px-4 py-3 text-left text-sm font-medium hover:bg-haznex-bg">Logout</button>
+        </form>
+        {% endif %}
+      {% else %}
+      <a href="{% url 'accounts:login' %}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-haznex-bg">Login</a>
+      <a href="{% url 'accounts:register' %}" class="mx-4 mt-2 btn-gold text-center">Register</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% if messages %}
+  <div class="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+    {% for message in messages %}
+    <div class="mb-2 {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-haznex-border bg-haznex-bg">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid gap-8 md:grid-cols-2">
+        <div>
+          <p class="text-xl font-bold text-gold-dark">Haznex</p>
+          <p class="mt-3 max-w-md text-sm leading-relaxed text-haznex-muted">
+            Get EX-UK Products Directly From the UK, delivered to your door in Kenya.
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-haznex-text">Contact</p>
+          <p class="mt-2 text-sm text-haznex-muted">Email: hello@haznex.co.ke</p>
+          <p class="text-sm text-haznex-muted">Phone: +254 700 000 000</p>
+        </div>
+      </div>
+      <p class="mt-8 border-t border-haznex-border pt-6 text-center text-xs text-haznex-muted">
+        &copy; {% now "Y" %} Haznex. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="{% static 'store/js/storefront.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

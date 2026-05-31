@@ -1,0 +1,2 @@
+<a href="{% url 'admin_panel:product_list' %}" class="haznex-nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Products</a>
+<a href="{% url 'admin_panel:product_fetch' %}" class="haznex-nav-link {% if request.resolver_match.url_name == 'product_fetch' or 'product_create' in request.resolver_match.url_name %}active{% endif %}">New Product</a>
