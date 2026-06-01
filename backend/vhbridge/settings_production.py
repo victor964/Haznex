@@ -52,6 +52,9 @@ STORAGES = {  # noqa: F405
     },
 }
 
+# Serve CSS/JS from app static folders if collectstatic did not run (fallback).
+WHITENOISE_USE_FINDERS = True
+
 _database_url = config("DATABASE_URL", default="")  # noqa: F405
 if _database_url:
     DATABASES["default"] = dj_database_url.config(  # noqa: F405
