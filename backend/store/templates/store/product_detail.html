@@ -24,8 +24,8 @@
 {% block content %}
 <section class="py-12">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="grid gap-10 lg:grid-cols-2">
-      <div>
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div id="product-gallery" class="min-w-0 lg:pr-8">
         <div class="relative aspect-square overflow-hidden rounded-xl border border-haznex-border bg-haznex-bg">
           {% with primary=product.primary_image %}
           <img
@@ -37,7 +37,7 @@
           {% endwith %}
         </div>
         {% if images|length > 1 %}
-        <div class="mt-4 flex gap-2 overflow-x-auto" id="thumbnail-strip">
+        <div class="mt-4 flex max-w-full gap-2 overflow-x-auto pb-1" id="thumbnail-strip">
           {% for img in images %}
           <button
             type="button"
@@ -52,7 +52,7 @@
         {% endif %}
       </div>
 
-      <div>
+      <div class="min-w-0 lg:pl-8">
         <div class="mb-4 flex flex-wrap gap-2">
           <span class="{{ product.condition|condition_badge_class }}">{{ product.get_condition_display }}</span>
           <span class="badge-source">{{ product.source_type|source_label }}</span>
