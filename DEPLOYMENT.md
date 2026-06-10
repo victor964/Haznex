@@ -80,6 +80,12 @@ Optional local-style vars (only if **not** using `DATABASE_URL` — not recommen
 | `DEFAULT_FROM_EMAIL` | From header in emails | Match Gmail address | `Haznex <victor@gmail.com>` |
 | `EMAIL_NOTIFICATIONS_ENABLED` | Gate all status emails | Set `True` when SMTP is configured | `False` |
 
+### Contact / WhatsApp
+
+| Variable | What it is | Where to get it | Example |
+|----------|------------|-----------------|---------|
+| `WHATSAPP_NUMBER` | WhatsApp chat button number (international format, no + prefix) | Your business WhatsApp number | `254712345678` |
+
 ### Pricing
 
 | Variable | What it is | Where to get it | Example |

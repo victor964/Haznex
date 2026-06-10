@@ -25,6 +25,7 @@
     </div>
     <nav class="haznex-nav">
       <a href="{% url 'admin_panel:dashboard' %}" class="haznex-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="{% url 'admin_panel:category_list' %}" class="haznex-nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">Categories</a>
       {% block nav_products %}{% endblock %}
       {% block nav_orders %}{% endblock %}
     </nav>

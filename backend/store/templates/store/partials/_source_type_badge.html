@@ -1,0 +1,8 @@
+{% if flag_code %}
+<span class="badge-source inline-flex items-center gap-1.5">
+  {% include "store/partials/_flag_icon.html" with code=flag_code extra_class="flag-icon-inline" %}
+  <span>{{ label }}</span>
+</span>
+{% else %}
+<span class="badge-source">{{ label }}</span>
+{% endif %}

@@ -61,6 +61,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "vhbridge.context_processors.site_settings",
+                "store.context_processors.whatsapp",
             ],
         },
     },
@@ -194,6 +195,9 @@ EMAIL_NOTIFICATIONS_ENABLED = config(
 )
 # Absolute URLs in notification emails (signals have no HTTP request)
 SITE_URL = config("SITE_URL", default="http://127.0.0.1:8000")
+
+# WhatsApp chat button (international format, no + prefix)
+WHATSAPP_NUMBER = config("WHATSAPP_NUMBER", default="")
 
 LOGIN_URL = "/haznex-admin/login/"
 LOGIN_REDIRECT_URL = "/haznex-admin/dashboard/"

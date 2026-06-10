@@ -1,0 +1,6 @@
+{% load static %}
+{% if code == "uk" %}
+<img src="{% static 'store/images/flags/uk.svg' %}" alt="United Kingdom" class="flag-icon {{ extra_class }}" width="24" height="16" loading="lazy">
+{% elif code == "ke" %}
+<img src="{% static 'store/images/flags/ke.svg' %}" alt="Kenya" class="flag-icon {{ extra_class }}" width="24" height="16" loading="lazy">
+{% endif %}

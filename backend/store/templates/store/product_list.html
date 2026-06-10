@@ -20,6 +20,7 @@
           placeholder="Search by product name..."
           class="form-input flex-1"
         >
+        {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
         {% if active_condition %}<input type="hidden" name="condition" value="{{ active_condition }}">{% endif %}
         {% if active_source_type %}<input type="hidden" name="source_type" value="{{ active_source_type }}">{% endif %}
         <button type="submit" class="btn-gold">Search</button>
@@ -27,28 +28,38 @@
     </form>
 
     <div class="mb-8 flex flex-wrap gap-2">
+      <span class="text-sm font-medium text-haznex-muted mr-2 self-center">Category:</span>
+      <a href="?{% query_string category=None %}" class="filter-pill {% if not active_category %}active{% endif %}">All</a>
+      {% for cat in categories %}
+      <a href="?{% query_string category=cat.slug %}" class="filter-pill {% if active_category == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="mb-8 flex flex-wrap gap-2">
       <span class="text-sm font-medium text-haznex-muted mr-2 self-center">Condition:</span>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if active_source_type %}source_type={{ active_source_type }}{% endif %}" class="filter-pill {% if not active_condition %}active{% endif %}">All</a>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}condition=new{% if active_source_type %}&source_type={{ active_source_type }}{% endif %}" class="filter-pill {% if active_condition == 'new' %}active{% endif %}">New</a>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}condition=used{% if active_source_type %}&source_type={{ active_source_type }}{% endif %}" class="filter-pill {% if active_condition == 'used' %}active{% endif %}">Used</a>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}condition=refurbished{% if active_source_type %}&source_type={{ active_source_type }}{% endif %}" class="filter-pill {% if active_condition == 'refurbished' %}active{% endif %}">Refurbished</a>
+      <a href="?{% query_string condition=None %}" class="filter-pill {% if not active_condition %}active{% endif %}">All</a>
+      <a href="?{% query_string condition='new' %}" class="filter-pill {% if active_condition == 'new' %}active{% endif %}">New</a>
+      <a href="?{% query_string condition='used' %}" class="filter-pill {% if active_condition == 'used' %}active{% endif %}">Used</a>
+      <a href="?{% query_string condition='refurbished' %}" class="filter-pill {% if active_condition == 'refurbished' %}active{% endif %}">Refurbished</a>
     </div>
 
     <div class="mb-8 flex flex-wrap gap-2">
       <span class="text-sm font-medium text-haznex-muted mr-2 self-center">Source:</span>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if active_condition %}condition={{ active_condition }}{% endif %}" class="filter-pill {% if not active_source_type %}active{% endif %}">All</a>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}source_type=facebook_marketplace{% if active_condition %}&condition={{ active_condition }}{% endif %}" class="filter-pill {% if active_source_type == 'facebook_marketplace' %}active{% endif %}">EX-UK</a>
-      <a href="?{% if search_query %}q={{ search_query }}&{% endif %}source_type=local{% if active_condition %}&condition={{ active_condition }}{% endif %}" class="filter-pill {% if active_source_type == 'local' %}active{% endif %}">Local</a>
+      <a href="?{% query_string source_type=None %}" class="filter-pill {% if not active_source_type %}active{% endif %}">All</a>
+      <a href="?{% query_string source_type='facebook_marketplace' %}" class="filter-pill {% if active_source_type == 'facebook_marketplace' %}active{% endif %}">EX-UK</a>
+      <a href="?{% query_string source_type='local' %}" class="filter-pill {% if active_source_type == 'local' %}active{% endif %}">Local</a>
     </div>
 
     {% if products %}
-    <div id="product-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {% include "store/partials/_pagination.html" with show_nav=False %}
+    <div id="product-grid" class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
       {% for product in products %}
       <div class="product-card">
         {% include "store/partials/_product_card.html" with product=product %}
       </div>
       {% endfor %}
     </div>
+    {% include "store/partials/_pagination.html" with show_count=False %}
     {% else %}
     <div class="py-16 text-center">
       <p class="text-lg text-haznex-muted">No products found.</p>

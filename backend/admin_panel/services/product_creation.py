@@ -27,6 +27,10 @@ def _ensure_cloudinary_configured():
 def create_product_bundle(user, product_data, pricing_data, image_files, primary_index=0):
     _ensure_cloudinary_configured()
 
+    category_id = product_data.get("category")
+    if category_id in ("", None):
+        category_id = None
+
     product = Product(
         name=product_data["name"],
         description=product_data["description"],
@@ -34,6 +38,7 @@ def create_product_bundle(user, product_data, pricing_data, image_files, primary
         source_type=product_data["source_type"],
         location=product_data["location"],
         facebook_listing_url=product_data.get("facebook_listing_url") or "",
+        category_id=category_id,
         weight_kg=_decimal_or_none(product_data.get("weight_kg")),
         is_active=False,
         created_by=user,

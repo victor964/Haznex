@@ -35,6 +35,36 @@ class ShippingOption(models.Model):
         return self.name
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
+    description = models.TextField(blank=True)
+    icon_emoji = models.CharField(max_length=10, blank=True)
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["display_order", "name"]
+
+    def __str__(self):
+        return self.name
+
+    def _generate_unique_slug(self):
+        base_slug = slugify(self.name) or "category"
+        slug = base_slug
+        counter = 2
+        while Category.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._generate_unique_slug()
+        super().save(*args, **kwargs)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=280, unique=True, blank=True)
@@ -49,6 +79,13 @@ class Product(models.Model):
         related_name="products_created",
     )
     facebook_listing_url = models.URLField(max_length=500, blank=True)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
+    )
     weight_kg = models.DecimalField(
         max_digits=8,
         decimal_places=3,

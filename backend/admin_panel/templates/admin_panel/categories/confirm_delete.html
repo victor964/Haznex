@@ -1,0 +1,16 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Delete Category | Haznex{% endblock %}
+{% block page_title %}Delete Category{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <p>Are you sure you want to delete <strong>{{ category.name }}</strong>?</p>
+  <p class="haznex-muted">This action cannot be undone.</p>
+  <form method="post" class="haznex-form-actions" style="margin-top:1.5rem">
+    {% csrf_token %}
+    <a href="{% url 'admin_panel:category_list' %}" class="haznex-btn haznex-btn-secondary">Cancel</a>
+    <button type="submit" class="haznex-btn haznex-btn-danger">Delete category</button>
+  </form>
+</section>
+{% endblock %}

@@ -143,9 +143,24 @@
     }
   }
 
+  function initWhatsAppFab() {
+    var btn = document.getElementById("whatsapp-fab-btn");
+    if (!btn || typeof gsap === "undefined") {
+      return;
+    }
+    gsap.set(btn, { transformOrigin: "center center" });
+    btn.addEventListener("mouseenter", function () {
+      gsap.to(btn, { scale: 1.1, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+    });
+    btn.addEventListener("mouseleave", function () {
+      gsap.to(btn, { scale: 1, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initMobileNav();
     initFormSubmitGuard();
     initPageLoader();
+    initWhatsAppFab();
   });
 })();

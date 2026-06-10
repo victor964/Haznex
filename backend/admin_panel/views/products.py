@@ -32,6 +32,8 @@ def _serialize_form_data(cleaned_data):
             data[key] = None
         elif hasattr(value, "isoformat"):
             data[key] = value.isoformat()
+        elif hasattr(value, "pk"):
+            data[key] = value.pk
         else:
             data[key] = str(value) if hasattr(value, "quantize") else value
     return data

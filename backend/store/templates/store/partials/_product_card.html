@@ -1,6 +1,11 @@
 {% load store_tags %}
 <a href="{% url 'store:product_detail' slug=product.slug %}" class="card-product group block">
-  <div class="aspect-square overflow-hidden bg-haznex-bg">
+  <div class="relative aspect-[4/3] overflow-hidden bg-haznex-bg">
+    {% with flag_code=product.source_type|source_flag_code %}
+    {% if flag_code %}
+    <span class="flag-badge">{% include "store/partials/_flag_icon.html" with code=flag_code extra_class="flag-icon-badge" %}</span>
+    {% endif %}
+    {% endwith %}
     {% with img=product.primary_image %}
     {% if img %}
     <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:product.name }}" class="h-full w-full object-cover transition group-hover:scale-105">
@@ -9,7 +14,7 @@
     {% endif %}
     {% endwith %}
   </div>
-  <div class="p-4">
+  <div class="p-4 max-[380px]:p-2.5">
     <div class="mb-2 flex flex-wrap gap-2">
       <span class="{{ product.condition|condition_badge_class }}">{{ product.get_condition_display }}</span>
       <span class="badge-source">{{ product.source_type|source_label }}</span>

@@ -10,6 +10,13 @@ from admin_panel.views.orders import (
     OrderDetailView,
     OrderListView,
 )
+from admin_panel.views.categories import (
+    CategoryCreateView,
+    CategoryDeleteView,
+    CategoryEditView,
+    CategoryListView,
+    CategoryToggleActiveView,
+)
 from admin_panel.views.products import (
     ProductDeleteView,
     ProductEditView,
@@ -27,6 +34,15 @@ urlpatterns = [
     path("login/", HaznexLoginView.as_view(), name="login"),
     path("logout/", HaznexLogoutView.as_view(), name="logout"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
+    path("categories/", CategoryListView.as_view(), name="category_list"),
+    path("categories/create/", CategoryCreateView.as_view(), name="category_create"),
+    path("categories/<int:pk>/edit/", CategoryEditView.as_view(), name="category_edit"),
+    path(
+        "categories/<int:pk>/toggle-active/",
+        CategoryToggleActiveView.as_view(),
+        name="category_toggle_active",
+    ),
+    path("categories/<int:pk>/delete/", CategoryDeleteView.as_view(), name="category_delete"),
     path("products/", ProductListView.as_view(), name="product_list"),
     path("products/fetch/", ProductFetchView.as_view(), name="product_fetch"),
     path("products/<int:pk>/edit/", ProductEditView.as_view(), name="product_edit"),

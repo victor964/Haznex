@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import PriceBreakdown, Product, ProductImage, ShippingOption
+from django.db.models import Count
+
+from .models import Category, PriceBreakdown, Product, ProductImage, ShippingOption
 
 
 class ProductImageInline(admin.TabularInline):
@@ -39,11 +41,27 @@ class ShippingOptionAdmin(admin.ModelAdmin):
     ordering = ("display_order", "name")
 
 
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "is_active", "display_order", "product_count")
+    list_filter = ("is_active",)
+    search_fields = ("name", "slug")
+    ordering = ("display_order", "name")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_product_count=Count("products"))
+
+    @admin.display(description="Products")
+    def product_count(self, obj):
+        return getattr(obj, "_product_count", obj.products.count())
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "slug",
+        "category",
         "condition",
         "source_type",
         "location",
@@ -51,7 +69,7 @@ class ProductAdmin(admin.ModelAdmin):
         "created_by",
         "created_at",
     )
-    list_filter = ("is_active", "condition", "source_type", "created_at")
+    list_filter = ("is_active", "condition", "source_type", "category", "created_at")
     search_fields = ("name", "slug", "location")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("created_at", "updated_at")

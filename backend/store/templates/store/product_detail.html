@@ -55,7 +55,10 @@
       <div class="min-w-0 lg:pl-8">
         <div class="mb-4 flex flex-wrap gap-2">
           <span class="{{ product.condition|condition_badge_class }}">{{ product.get_condition_display }}</span>
-          <span class="badge-source">{{ product.source_type|source_label }}</span>
+          {% if product.category %}
+          <span class="badge-source">{% if product.category.icon_emoji %}{{ product.category.icon_emoji }} {% endif %}{{ product.category.name }}</span>
+          {% endif %}
+          {% source_type_badge product.source_type %}
         </div>
         <h1 class="text-3xl font-bold text-haznex-text">{{ product.name }}</h1>
         <p class="mt-2 text-haznex-muted">{{ product.location }}</p>

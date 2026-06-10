@@ -1,0 +1,32 @@
+{% load store_tags %}
+{% if show_count != False and page_obj.paginator.count %}
+<p class="mb-6 text-sm text-haznex-muted">
+  Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }}
+</p>
+{% endif %}
+
+{% if show_nav != False and page_obj.has_other_pages %}
+<nav class="pagination-bar mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Product pagination">
+  {% if page_obj.has_previous %}
+  <a href="?{% query_string page=page_obj.previous_page_number %}" class="pagination-btn">Previous</a>
+  {% else %}
+  <span class="pagination-btn pagination-btn-disabled">Previous</span>
+  {% endif %}
+
+  {% for item in pagination_pages %}
+    {% if item == "ellipsis" %}
+    <span class="pagination-ellipsis">...</span>
+    {% elif item == page_obj.number %}
+    <span class="pagination-page active" aria-current="page">{{ item }}</span>
+    {% else %}
+    <a href="?{% query_string page=item %}" class="pagination-page">{{ item }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+  <a href="?{% query_string page=page_obj.next_page_number %}" class="pagination-btn">Next</a>
+  {% else %}
+  <span class="pagination-btn pagination-btn-disabled">Next</span>
+  {% endif %}
+</nav>
+{% endif %}

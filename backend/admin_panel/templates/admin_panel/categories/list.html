@@ -1,0 +1,74 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Categories | Haznex{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block header_extra %}
+<a href="{% url 'admin_panel:category_create' %}" class="haznex-btn haznex-btn-primary">+ New category</a>
+{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <div class="haznex-table-scroll">
+  <table class="haznex-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Icon</th>
+        <th>Active products</th>
+        <th>Status</th>
+        <th>Order</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+      <tr>
+        <td>{{ category.name }}</td>
+        <td>{% if category.icon_emoji %}<span style="font-size:1.25rem">{{ category.icon_emoji }}</span>{% else %}<span class="haznex-muted">none</span>{% endif %}</td>
+        <td>{{ category.active_product_count }}</td>
+        <td>
+          {% if category.is_active %}
+          <span class="haznex-tag haznex-tag-active">Active</span>
+          {% else %}
+          <span class="haznex-tag">Inactive</span>
+          {% endif %}
+        </td>
+        <td>{{ category.display_order }}</td>
+        <td class="haznex-actions">
+          <a href="{% url 'admin_panel:category_edit' category.pk %}">Edit</a>
+          <form method="post" action="{% url 'admin_panel:category_toggle_active' category.pk %}" class="haznex-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="haznex-link-btn">
+              {% if category.is_active %}Deactivate{% else %}Activate{% endif %}
+            </button>
+          </form>
+          {% if category.products.exists %}
+          <span class="haznex-muted" title="Remove all products from this category before deleting">Delete</span>
+          {% else %}
+          <a href="{% url 'admin_panel:category_delete' category.pk %}" class="haznex-danger-link">Delete</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="haznex-muted">No categories yet. <a href="{% url 'admin_panel:category_create' %}">Create one</a>.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+{% if page_obj.has_other_pages %}
+<nav class="haznex-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

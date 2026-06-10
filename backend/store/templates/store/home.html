@@ -11,6 +11,13 @@
     <p class="hero-sub mx-auto mt-6 max-w-2xl text-lg text-haznex-muted" id="hero-sub">
       Browse genuine UK products sourced, shipped, and delivered to your door in Kenya
     </p>
+    <div class="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-2 border-t border-haznex-border pt-4 text-sm text-gold-dark">
+      {% include "store/partials/_flag_icon.html" with code="uk" extra_class="flag-icon-inline" %}
+      <span>Sourced in the United Kingdom</span>
+      <span class="text-haznex-muted">|</span>
+      {% include "store/partials/_flag_icon.html" with code="ke" extra_class="flag-icon-inline" %}
+      <span>Delivered across Kenya</span>
+    </div>
     <a
       href="{% url 'store:product_list' %}"
       id="hero-browse-btn"
@@ -53,6 +60,29 @@
     </div>
   </div>
 </section>
+{% if categories %}
+<section class="py-16" id="shop-by-category">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mb-10 text-center">
+      <h2 class="text-3xl font-bold text-haznex-text">Shop by Category</h2>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
+      {% for category in categories %}
+      <a
+        href="{% url 'store:product_list' %}?category={{ category.slug }}"
+        class="category-card block rounded-xl border border-gold/40 bg-white p-6 text-center transition hover:border-gold"
+      >
+        {% if category.icon_emoji %}
+        <div class="mb-3 text-4xl">{{ category.icon_emoji }}</div>
+        {% endif %}
+        <h3 class="font-semibold text-haznex-text">{{ category.name }}</h3>
+        <p class="mt-1 text-sm text-haznex-muted">{{ category.product_count }} product{{ category.product_count|pluralize }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 <section class="py-16" id="featured-products">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="mb-10 text-center">
@@ -60,7 +90,7 @@
       <p class="mt-2 text-haznex-muted">Handpicked items ready to order</p>
     </div>
     {% if featured_products %}
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
       {% for product in featured_products %}
       <div class="featured-card">
         {% include "store/partials/_product_card.html" with product=product %}
@@ -89,12 +119,18 @@
       </div>
       <div class="how-step text-center">
         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg font-bold text-white">2</div>
-        <h3 class="font-semibold text-haznex-text">We Source in the UK</h3>
+        <h3 class="font-semibold text-haznex-text inline-flex items-center justify-center gap-2">
+          {% include "store/partials/_flag_icon.html" with code="uk" extra_class="flag-icon-inline" %}
+          <span>We Source in the UK</span>
+        </h3>
         <p class="mt-2 text-sm text-haznex-muted">Once payment is confirmed, our UK team sources and ships your item.</p>
       </div>
       <div class="how-step text-center">
         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg font-bold text-white">3</div>
-        <h3 class="font-semibold text-haznex-text">Delivered to Kenya</h3>
+        <h3 class="font-semibold text-haznex-text inline-flex items-center justify-center gap-2">
+          {% include "store/partials/_flag_icon.html" with code="ke" extra_class="flag-icon-inline" %}
+          <span>Delivered to Kenya</span>
+        </h3>
         <p class="mt-2 text-sm text-haznex-muted">Track every step until your product arrives at your door in Kenya.</p>
       </div>
     </div>
@@ -220,6 +256,32 @@
             ease: "power2.out",
           });
         },
+      });
+    }
+    if (document.getElementById("shop-by-category")) {
+      gsap.fromTo(
+        ".category-card",
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#shop-by-category",
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+      document.querySelectorAll(".category-card").forEach(function (card) {
+        card.addEventListener("mouseenter", function () {
+          gsap.to(card, { y: -4, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+        });
+        card.addEventListener("mouseleave", function () {
+          gsap.to(card, { y: 0, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+        });
       });
     }
     gsap.fromTo(

@@ -1,0 +1,24 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}{{ form_title }} | Haznex{% endblock %}
+{% block page_title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<section class="haznex-section">
+  <form method="post" class="haznex-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="haznex-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}<p class="haznex-help">{{ field.help_text }}</p>{% endif %}
+      {{ field.errors }}
+    </div>
+    {% endfor %}
+    <div class="haznex-form-actions">
+      <a href="{% url 'admin_panel:category_list' %}" class="haznex-btn haznex-btn-secondary">Cancel</a>
+      <button type="submit" class="haznex-btn haznex-btn-primary">{{ submit_label }}</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

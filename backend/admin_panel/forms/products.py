@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from store.choices import ProductCondition, SourceType
-from store.models import PriceBreakdown, Product, ShippingOption
+from store.models import Category, PriceBreakdown, Product, ShippingOption
 from store.pricing import calculate_final_client_price_kes
 
 GBP_FIELD_HELP = "Enter amount in GBP (£)"
@@ -28,6 +28,7 @@ class ProductStep1Form(forms.ModelForm):
         model = Product
         fields = [
             "name",
+            "category",
             "description",
             "condition",
             "source_type",
@@ -37,6 +38,7 @@ class ProductStep1Form(forms.ModelForm):
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "haznex-input"}),
+            "category": forms.Select(attrs={"class": "haznex-input"}),
             "description": forms.Textarea(attrs={"class": "haznex-input", "rows": 5}),
             "condition": forms.Select(attrs={"class": "haznex-input"}),
             "source_type": forms.Select(attrs={"class": "haznex-input"}),
@@ -47,6 +49,11 @@ class ProductStep1Form(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = Category.objects.filter(is_active=True).order_by(
+            "display_order", "name"
+        )
+        self.fields["category"].required = False
+        self.fields["category"].empty_label = "Select a category (optional)"
         self.fields["source_type"].initial = SourceType.FACEBOOK_MARKETPLACE
         self.fields["condition"].initial = ProductCondition.USED
 
@@ -188,6 +195,7 @@ class ProductEditForm(forms.ModelForm):
         model = Product
         fields = [
             "name",
+            "category",
             "description",
             "condition",
             "source_type",
@@ -203,6 +211,11 @@ class ProductEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = Category.objects.filter(is_active=True).order_by(
+            "display_order", "name"
+        )
+        self.fields["category"].required = False
+        self.fields["category"].empty_label = "Select a category (optional)"
         gbp_widgets = {
             "uk_original_price": forms.NumberInput(
                 attrs={"class": "haznex-input haznex-gbp-field", "step": "0.01", "id": "id_uk_original_price"}
